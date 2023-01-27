@@ -73,7 +73,7 @@ const enemies = [];
 
 function spawnEnemies() {
     setInterval(() => {
-        const radius = Math.random() * (30 - 5)
+        const radius = Math.random() * (30 - 10)
 
         let x, y;
         if (Math.random() < 0.5) {
@@ -95,7 +95,6 @@ function spawnEnemies() {
 
         enemies.push(new Enemy(x, y, radius, color, velocity))
 
-        console.log(enemies)
     }, 1000)
 }
 
@@ -108,8 +107,20 @@ function animate() {
         projectile.update()
     })
 
-    enemies.forEach((enemy) => {
+    enemies.forEach((enemy, index) => {
         enemy.update()
+        // Detect collision on enemy & prjectile // hit
+        projectiles.forEach((projectile, projectileIndex) => {
+            const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
+
+            // Object Touch 
+            if (distance - enemy.radius - projectile.radius < 1) {
+                setTimeout(() => {
+                    enemies.splice(index, 1)
+                    projectiles.splice(projectileIndex, 1)
+                }, 0)
+            }
+        })
     })
 }
 
