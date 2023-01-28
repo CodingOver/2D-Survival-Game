@@ -98,8 +98,9 @@ function spawnEnemies() {
     }, 1000)
 }
 
+let animationId;
 function animate() {
-    requestAnimationFrame(animate)
+    animationId = requestAnimationFrame(animate)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     player.draw()
 
@@ -109,6 +110,13 @@ function animate() {
 
     enemies.forEach((enemy, index) => {
         enemy.update()
+        const distance = Math.hypot(player.x - enemy.x, player.y - enemy.y)
+
+        // End Game
+        if (distance - enemy.radius - player.radius < 1) {
+            cancelAnimationFrame(animationId)
+        }
+
         // Detect collision on enemy & prjectile // hit
         projectiles.forEach((projectile, projectileIndex) => {
             const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
