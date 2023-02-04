@@ -1,3 +1,5 @@
+console.log(gsap)
+
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d")
 
@@ -131,16 +133,25 @@ function animate() {
             cancelAnimationFrame(animationId)
         }
 
-        // Detect collision on enemy & projectile // hit
+        // Detect collision on enemy & projectile hit
         projectiles.forEach((projectile, projectileIndex) => {
             const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
 
-            // Object Touch 
+            // Projectiles Touch Enemy
             if (distance - enemy.radius - projectile.radius < 1) {
-                setTimeout(() => {
-                    enemies.splice(index, 1)
-                    projectiles.splice(projectileIndex, 1)
-                }, 0)
+                if (enemy.radius - 10 > 5) {
+                    gsap.to(enemy, {
+                        radius: enemy.radius - 10
+                    })
+                    setTimeout(() => {
+                        projectiles.splice(projectileIndex, 1)
+                    }, 0)
+                } else {
+                    setTimeout(() => {
+                        enemies.splice(index, 1)
+                        projectiles.splice(projectileIndex, 1)
+                    }, 0)
+                }
             }
         })
     })
