@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game with canvas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             padding: 0;
@@ -16,7 +17,12 @@
 </head>
 
 <body>
+    <div class="fixed text-white text-sm ml-2 mt-2 select-none">
+        <span>Scores: </span>
+        <span id="scoreEl">0</span>
+    </div>
     <canvas id="canvas"></canvas>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"
         integrity="sha512-f8mwTB+Bs8a5c46DEm7HQLcJuHMBaH/UFlcgyetMqqkvTcYg4g5VXsYR71b3qC82lZytjNYvBj2pf0VekA9/FQ=="
