@@ -5,6 +5,8 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 const scoreEl = document.getElementById("scoreEl")
+const startGameBtn = document.getElementById("startGameBtn")
+const modalEl = document.getElementById("modalEl")
 
 // Create a  Player
 class Player {
@@ -223,5 +225,9 @@ addEventListener("click", (event) => {
         new Projectiles(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
     )
 })
-animate()
-spawnEnemies()
+
+startGameBtn.addEventListener("click", () => {
+    animate()
+    spawnEnemies()
+    modalEl.style.display = "none"
+})
