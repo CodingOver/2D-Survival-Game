@@ -171,9 +171,12 @@ function animate() {
 
             // Projectiles Touch Enemy
             if (distance - enemy.radius - projectile.radius < 1) {
-
-                for (let i = 0; i < 8; i++) {
-                    particles.push(new Particle(projectile.x, projectile.y, 3, enemy.color, { x: Math.random() - 0.5, y: Math.random() - 0.5 }))
+                // Create Explosions
+                for (let i = 0; i < enemy.radius * 2; i++) {
+                    particles.push(new Particle(projectile.x, projectile.y, Math.random() * 3, enemy.color, {
+                        x: (Math.random() - 0.5) * (Math.random() * 6),
+                        y: (Math.random() - 0.5) * (Math.random() * 6)
+                    }))
                 }
 
                 if (enemy.radius - 10 > 5) {
