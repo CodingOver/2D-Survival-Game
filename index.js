@@ -87,6 +87,14 @@ class Enemy {
     }
     update() {
         this.draw()
+
+        const angle = Math.atan2(player.y - this.y, player.x - this.x)
+
+        this.velocity = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
+
         this.x = this.x + this.velocity.x;
         this.y = this.y + this.velocity.y;
     }
@@ -135,33 +143,32 @@ function init() {
 }
 
 function spawnEnemies() {
-    setInterval(() => {
-        // const radius = Math.random() * (20 - 10)
-        const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+    // setInterval(() => {
+    const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
 
 
-        let x, y;
-        if (Math.random() < 0.5) {
-            x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
-            y = Math.random() * canvas.height;
-        } else {
-            x = Math.random() * canvas.width
-            y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
-        }
-        // colorizing Game
-        const color = `hsl(${Math.random() * 360}, 50%, 50%)`
-        const angle = Math.atan2(
-            canvas.height / 2 - y, canvas.width / 2 - x)
+    let x, y;
+    if (Math.random() < 0.5) {
+        x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
+        y = Math.random() * canvas.height;
+    } else {
+        x = Math.random() * canvas.width
+        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
+    }
+    // colorizing Game
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`
+    const angle = Math.atan2(
+        canvas.height / 2 - y, canvas.width / 2 - x)
 
-        const velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
-        }
+    const velocity = {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    }
 
 
-        enemies.push(new Enemy(x, y, radius, color, velocity))
+    enemies.push(new Enemy(x, y, radius, color, velocity))
 
-    }, 1000)
+    // }, 1000)
 }
 
 let animationId;
@@ -258,7 +265,7 @@ addEventListener("click", (event) => {
         y: Math.sin(angle) * 6
     }
     projectiles.push(
-        new Projectiles(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
+        new Projectiles(player.x, player.y, 5, "white", velocity)
     )
 })
 addEventListener("keydown", ({ keyCode }) => {
