@@ -16,6 +16,11 @@ class Player {
         this.y = y;
         this.radius = radius;
         this.color = color;
+        this.velocity = {
+            x: 0,
+            y: 0
+        }
+        this.friction = .99
     }
 
     draw() {
@@ -23,6 +28,23 @@ class Player {
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.fillStyle = this.color;
         ctx.fill();
+    }
+    update() {
+        this.draw()
+        this.velocity.x *= this.friction
+        this.velocity.y *= this.friction
+
+        if (this.x - this.radius + this.velocity.x > 0 && this.x + this.radius + this.velocity.x < canvas.width) {
+            this.x = this.x + this.velocity.x
+        } else {
+            this.velocity.x = 0
+        }
+
+        if (this.y - this.radius + this.velocity.y > 0 && this.y + this.radius + this.velocity.y < canvas.height) {
+            this.y = this.y + this.velocity.y
+        } else {
+            this.velocity.y = 0
+        }
     }
 }
 
@@ -148,7 +170,7 @@ function animate() {
     animationId = requestAnimationFrame(animate)
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    player.draw()
+    player.update()
     particles.forEach((particle, index) => {
         if (particle.alpha <= 0) {
             particles.splice(index, 1)
@@ -238,6 +260,17 @@ addEventListener("click", (event) => {
     projectiles.push(
         new Projectiles(canvas.width / 2, canvas.height / 2, 5, "white", velocity)
     )
+})
+addEventListener("keydown", ({ keyCode }) => {
+    if (keyCode === 37 || keyCode === 65) {
+        player.velocity.x -= 1
+    } else if (keyCode === 38 || keyCode === 87) {
+        player.velocity.y -= 1
+    } else if (keyCode === 39 || keyCode === 68) {
+        player.velocity.x += 1
+    } else if (keyCode === 40 || keyCode === 83) {
+        player.velocity.y += 1
+    }
 })
 
 startGameBtn.addEventListener("click", () => {
