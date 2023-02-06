@@ -79,9 +79,16 @@ class Enemy {
         this.color = color
         this.velocity = velocity
         this.type = 'linear'
-
+        this.center = {
+            x,
+            y
+        }
+        this.radians = 0
         if (Math.random() < 0.25) {
             this.type = "homing"
+            if (Math.random() < .5) {
+                this.type = "spinning"
+            }
         }
     }
     draw() {
@@ -107,6 +114,13 @@ class Enemy {
 
             this.x = this.x + this.velocity.x;
             this.y = this.y + this.velocity.y;
+        } else if (this.type === 'spinning') {
+            this.radians += 0.05
+            this.center.x += this.velocity.x;
+            this.center.y += this.velocity.y;
+
+            this.x = this.center.x + Math.cos(this.radians) * 100
+            this.y = this.center.y + Math.sin(this.radians) * 100
         }
     }
 
@@ -180,7 +194,7 @@ function spawnEnemies() {
 
         enemies.push(new Enemy(x, y, radius, color, velocity))
 
-    }, 4000)
+    }, 3000)
 }
 
 let animationId;
