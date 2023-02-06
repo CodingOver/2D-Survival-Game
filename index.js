@@ -78,6 +78,11 @@ class Enemy {
         this.radius = radius
         this.color = color
         this.velocity = velocity
+        this.type = 'linear'
+
+        if (Math.random() < 0.25) {
+            this.type = "homing"
+        }
     }
     draw() {
         ctx.beginPath();
@@ -88,16 +93,23 @@ class Enemy {
     update() {
         this.draw()
 
-        const angle = Math.atan2(player.y - this.y, player.x - this.x)
+        if (this.type === 'linear') {
+            // linear travel
+            this.x = this.x + this.velocity.x;
+            this.y = this.y + this.velocity.y;
+        } else if (this.type === 'homing') {
+            const angle = Math.atan2(player.y - this.y, player.x - this.x)
 
-        this.velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
+            this.velocity = {
+                x: Math.cos(angle),
+                y: Math.sin(angle)
+            }
+
+            this.x = this.x + this.velocity.x;
+            this.y = this.y + this.velocity.y;
         }
-
-        this.x = this.x + this.velocity.x;
-        this.y = this.y + this.velocity.y;
     }
+
 }
 class Particle {
     constructor(x, y, radius, color, velocity) {
@@ -143,32 +155,32 @@ function init() {
 }
 
 function spawnEnemies() {
-    // setInterval(() => {
-    const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+    setInterval(() => {
+        const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
 
 
-    let x, y;
-    if (Math.random() < 0.5) {
-        x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
-        y = Math.random() * canvas.height;
-    } else {
-        x = Math.random() * canvas.width
-        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
-    }
-    // colorizing Game
-    const color = `hsl(${Math.random() * 360}, 50%, 50%)`
-    const angle = Math.atan2(
-        canvas.height / 2 - y, canvas.width / 2 - x)
+        let x, y;
+        if (Math.random() < 0.5) {
+            x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
+            y = Math.random() * canvas.height;
+        } else {
+            x = Math.random() * canvas.width
+            y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
+        }
+        // colorizing Game
+        const color = `hsl(${Math.random() * 360}, 50%, 50%)`
+        const angle = Math.atan2(
+            canvas.height / 2 - y, canvas.width / 2 - x)
 
-    const velocity = {
-        x: Math.cos(angle),
-        y: Math.sin(angle)
-    }
+        const velocity = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
 
 
-    enemies.push(new Enemy(x, y, radius, color, velocity))
+        enemies.push(new Enemy(x, y, radius, color, velocity))
 
-    // }, 1000)
+    }, 4000)
 }
 
 let animationId;
@@ -258,7 +270,9 @@ function animate() {
 
 addEventListener("click", (event) => {
     const angle = Math.atan2(
-        event.clientY - canvas.height / 2, event.clientX - canvas.width / 2)
+        event.clientY - player.y,
+        event.clientX - player.x
+    )
 
     const velocity = {
         x: Math.cos(angle) * 6,
