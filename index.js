@@ -13,8 +13,8 @@ const startGameAudio = new Audio('./audio/startGame.mp3')
 const endGameAudio = new Audio('./audio/endGame.mp3')
 const shootAudio = new Audio('./audio/shoot.mp3')
 const enemyHitAudio = new Audio('./audio/enemyHit.mp3')
-const enemyExplode = new Audio('./audio/enemyExplode.mp3')
-
+const enemyEliminatedAudio = new Audio('./audio/enemyHit.mp3')
+const powerUpsAudio = new Audio('./audio/powerUp.mp3')
 
 // Create a  Player
 class Player {
@@ -407,6 +407,8 @@ function animate() {
             player.powerUp = "Automatic"
             powerUps.splice(index, 1)
 
+            powerUpsAudio.cloneNode().play()
+
             setTimeout(() => {
                 player.powerUp = null
                 player.color = "#FFFFFF"
@@ -469,7 +471,7 @@ function animate() {
 
                 // Shrink Enemy
                 if (enemy.radius - 10 > 5) {
-                    enemyHitAudio.play()
+                    enemyHitAudio.cloneNode().play()
 
                     // increase our score By 100
                     score += 100
@@ -487,7 +489,7 @@ function animate() {
                 } else {
 
                     // Eliminate Enemy
-                    enemyExplode.play()
+                    enemyEliminatedAudio.cloneNode().play()
 
                     // Remove from scene all together
                     // Bonus : Increase By 250
