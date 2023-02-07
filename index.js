@@ -215,6 +215,31 @@ class Particle {
         this.alpha -= 0.01
     }
 }
+
+class BackgroundParticle {
+    constructor(x, y, radius, color) {
+        this.x = x
+        this.y = y
+        this.radius = radius
+        this.color = color
+        this.alpha = 0.1
+        this.initialAlpha = this.alpha
+    }
+    draw() {
+        ctx.save()
+        ctx.globalAlpha = this.alpha
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+        ctx.fillStyle = this.color
+        ctx.fill()
+        ctx.restore()
+    }
+    update() {
+        this.draw()
+        // this.alpha -= 0.01
+    }
+}
+
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
@@ -223,6 +248,7 @@ let powerUps = [];
 let projectiles = [];
 let enemies = [];
 let particles = [];
+let backgroundParticle = [];
 
 function init() {
     player = new Player(x, y, 10, "white")
@@ -232,6 +258,14 @@ function init() {
     score = 0
     scoreEl.innerHTML = score
     scoreResult.innerHTML = score
+
+    for (let x = 0; x < canvas.width; x += 30) {
+        for (let y = 0; y < canvas.height; y += 30) {
+            backgroundParticle.push(
+                new BackgroundParticle(x, y, 3, "blue")
+            )
+        }
+    }
 }
 
 function spawnEnemies() {
@@ -326,6 +360,28 @@ function animate() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+    backgroundParticle.forEach((backgroundParticle) => {
+        const distance = Math.hypot(
+            player.x - backgroundParticle.x,
+            player.y - backgroundParticle.y
+        )
+
+        const hideRadius = 100
+        if (distance < hideRadius) {
+            if (distance < 70) {
+                backgroundParticle.alpha = 0
+            } else {
+                backgroundParticle.alpha = 0.5
+            }
+        } else if (distance >= hideRadius && backgroundParticle.alpha < backgroundParticle.initialAlpha) {
+            backgroundParticle.alpha += 0.01
+        } else if (distance >= hideRadius && backgroundParticle.alpha > backgroundParticle.initialAlpha) {
+            backgroundParticle.alpha -= 0.01
+        }
+
+        backgroundParticle.update()
+    })
+
     player.update()
 
     if (player.powerUp === "Automatic" && mouse.down) {
@@ -402,6 +458,8 @@ function animate() {
                     }))
                 }
 
+                //  Change backgroundParticle Color
+
                 if (enemy.radius - 10 > 5) {
 
                     // increase our score By 100
@@ -430,6 +488,7 @@ function animate() {
                     }, 0)
                 }
             }
+
         })
     })
 }
