@@ -13,6 +13,7 @@ const startGameAudio = new Audio('./audio/startGame.mp3')
 const endGameAudio = new Audio('./audio/endGame.mp3')
 const shootAudio = new Audio('./audio/shoot.mp3')
 const enemyHitAudio = new Audio('./audio/enemyHit.mp3')
+const enemyExplode = new Audio('./audio/enemyExplode.mp3')
 
 
 // Create a  Player
@@ -469,26 +470,30 @@ function animate() {
                 // Shrink Enemy
                 if (enemy.radius - 10 > 5) {
                     enemyHitAudio.play()
+
                     // increase our score By 100
                     score += 100
                     scoreEl.innerHTML = score;
 
                     createScoreLabel(projectile, 100)
-                    console.log(projectile.x, projectile.y)
                     gsap.to(enemy, {
                         radius: enemy.radius - 10
                     })
+
                     setTimeout(() => {
                         projectiles.splice(projectileIndex, 1)
                     }, 0)
+
                 } else {
+
+                    // Eliminate Enemy
+                    enemyExplode.play()
 
                     // Remove from scene all together
                     // Bonus : Increase By 250
                     score += 250
                     scoreEl.innerHTML = score;
                     createScoreLabel(projectile, 250)
-
 
                     //  Change backgroundParticle Color
                     backgroundParticle.forEach((backgroundParticle) => {
