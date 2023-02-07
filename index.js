@@ -21,6 +21,7 @@ class Player {
             y: 0
         }
         this.friction = .99
+        this.powerUp = ''
     }
 
     draw() {
@@ -46,6 +47,22 @@ class Player {
             this.velocity.y = 0
         }
     }
+
+
+    shoot(mouse, color) {
+        const angle = Math.atan2(
+            mouse.y - this.y,
+            mouse.x - this.x
+        )
+
+        const velocity = {
+            x: Math.cos(angle) * 6,
+            y: Math.sin(angle) * 6
+        }
+        projectiles.push(
+            new Projectiles(this.x, this.y, 5, color, velocity)
+        )
+    }
 }
 
 // Create a Shoot Projectiles
@@ -70,6 +87,35 @@ class Projectiles {
     }
 }
 
+const powerUpImg = new Image()
+powerUpImg.src = "./img/Vector.png"
+
+// Create a Power Ups
+class PowerUp {
+    constructor(x, y, velocity) {
+        this.x = x
+        this.y = y
+        this.velocity = velocity
+        this.width = 14
+        this.height = 18
+        this.radians = 0
+    }
+    draw() {
+        ctx.save()
+        ctx.translate(this.x + this.width / 2, this.y + this.height / 2)
+        ctx.rotate(this.radians)
+        ctx.translate(-this.x - this.width / 2, -this.y - this.height / 2)
+        ctx.drawImage(powerUpImg, this.x, this.y, 14, 18)
+        ctx.restore()
+    }
+    update() {
+        this.radians += 0.002
+        this.draw()
+        this.x = this.x + this.velocity.x;
+        this.y = this.y + this.velocity.y;
+
+    }
+}
 // Create Enemy
 class Enemy {
     constructor(x, y, radius, color, velocity) {
@@ -173,6 +219,7 @@ const x = canvas.width / 2;
 const y = canvas.height / 2;
 
 let player = new Player(x, y, 10, "white")
+let powerUps = [];
 let projectiles = [];
 let enemies = [];
 let particles = [];
@@ -216,13 +263,73 @@ function spawnEnemies() {
     }, 4000)
 }
 
+function spawnPowerUps() {
+    setInterval(() => {
+        let x, y;
+
+        if (Math.random() < 0.5) {
+
+            x = Math.random() < 0.5 ? 0 - 7 : canvas.width + 7
+            y = Math.random() * canvas.height;
+
+        } else {
+            7
+            x = Math.random() * canvas.width
+            y = Math.random() < 0.5 ? 0 - 9 : canvas.height + 9
+
+        }
+
+        // colorizing Game
+        const angle = Math.atan2(
+            canvas.height / 2 - y, canvas.width / 2 - x)
+
+        const velocity = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
+
+
+        powerUps.push(new PowerUp(x, y, velocity))
+
+    }, 4000)
+}
+
 let animationId;
 let score = 0;
+let frame = 0;
 function animate() {
     animationId = requestAnimationFrame(animate)
+    frame++;
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
+
     player.update()
+
+    if (player.powerUp === "Automatic" && mouse.down) {
+        if (frame % 3 === 0) {
+            player.shoot(mouse, '#FFF500')
+        }
+    }
+
+    powerUps.forEach((powerUp, index) => {
+        const distance = Math.hypot(player.x - powerUp.x, player.y - powerUp.y)
+
+        // Gain The Automatic Shooting Ability
+        if (distance - player.radius - powerUp.width / 2 < 1) {
+            player.color = '#FFF500'
+            player.powerUp = "Automatic"
+            powerUps.splice(index, 1)
+
+            setTimeout(() => {
+                player.powerUp = null
+                player.color = "#FFFFFF"
+            }, 5000)
+        } else {
+            powerUp.update()
+        }
+
+    })
+
     particles.forEach((particle, index) => {
         if (particle.alpha <= 0) {
             particles.splice(index, 1)
@@ -301,20 +408,36 @@ function animate() {
     })
 }
 
-addEventListener("click", (event) => {
-    const angle = Math.atan2(
-        event.clientY - player.y,
-        event.clientX - player.x
-    )
+const mouse = {
+    down: false,
+    x: undefined,
+    y: undefined
+}
 
-    const velocity = {
-        x: Math.cos(angle) * 6,
-        y: Math.sin(angle) * 6
-    }
-    projectiles.push(
-        new Projectiles(player.x, player.y, 5, "white", velocity)
-    )
+addEventListener("mousedown", ({ clientX, clientY }) => {
+    mouse.x = clientX
+    mouse.y = clientY
+
+    mouse.down = true
 })
+
+addEventListener("mousemove", ({ clientX, clientY }) => {
+    mouse.x = clientX
+    mouse.y = clientY
+})
+
+addEventListener("mouseup", () => {
+    mouse.down = false
+
+})
+
+addEventListener("click", ({ clientX, clientY }) => {
+    mouse.x = clientX
+    mouse.y = clientY
+    player.shoot(mouse)
+})
+
+
 addEventListener("keydown", ({ keyCode }) => {
     if (keyCode === 37 || keyCode === 65) {
         player.velocity.x -= 1
@@ -331,5 +454,6 @@ startGameBtn.addEventListener("click", () => {
     init()
     animate()
     spawnEnemies()
+    spawnPowerUps()
     modalEl.style.display = "none"
 })
