@@ -458,8 +458,6 @@ function animate() {
                     }))
                 }
 
-                //  Change backgroundParticle Color
-
                 if (enemy.radius - 10 > 5) {
 
                     // increase our score By 100
@@ -481,6 +479,22 @@ function animate() {
                     score += 250
                     scoreEl.innerHTML = score;
                     createScoreLabel(projectile, 250)
+
+                    //  Change backgroundParticle Color
+                    backgroundParticle.forEach((backgroundParticle) => {
+                        backgroundParticle.color = enemy.color
+
+                        gsap.to(backgroundParticle, {
+                            alpha: 0.5,
+                            duration: 0.015,
+                            onComplete: () => {
+                                gsap.to(backgroundParticle, {
+                                    alpha: backgroundParticle.initialAlpha,
+                                    duration: 0.03
+                                })
+                            }
+                        })
+                    })
 
                     setTimeout(() => {
                         enemies.splice(index, 1)
