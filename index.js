@@ -9,6 +9,11 @@ const startGameBtn = document.getElementById("startGameBtn")
 const modalEl = document.getElementById("modalEl")
 const scoreResult = document.getElementById("scoreResult")
 
+const startGameAudio = new Audio('./audio/startGame.mp3')
+const endGameAudio = new Audio('./audio/endGame.mp3')
+const shootAudio = new Audio('./audio/shoot.mp3')
+
+
 // Create a  Player
 class Player {
     constructor(x, y, radius, color) {
@@ -62,6 +67,7 @@ class Player {
         projectiles.push(
             new Projectiles(this.x, this.y, 5, color, velocity)
         )
+        shootAudio.cloneNode().play()
     }
 }
 
@@ -441,6 +447,7 @@ function animate() {
             cancelAnimationFrame(animationId)
             modalEl.style.display = "flex"
             scoreResult.innerHTML = score;
+            endGameAudio.play()
         }
 
         // Detect collision on enemy & projectile hit
@@ -555,4 +562,5 @@ startGameBtn.addEventListener("click", () => {
     spawnEnemies()
     spawnPowerUps()
     modalEl.style.display = "none"
+    startGameAudio.play()
 })
