@@ -528,8 +528,14 @@ function animate() {
                     })
 
                     setTimeout(() => {
-                        enemies.splice(index, 1)
-                        projectiles.splice(projectileIndex, 1)
+                        const enemyFound = enemies.find((enemyValue) => {
+                            return enemyValue === enemy
+                        })
+                        if (enemyFound) {
+                            enemies.splice(index, 1)
+                            projectiles.splice(projectileIndex, 1)
+                        }
+
                     }, 0)
                 }
             }
