@@ -254,10 +254,9 @@ class BackgroundParticle {
     }
 }
 
-const x = canvas.width / 2;
-const y = canvas.height / 2;
 
-let player = new Player(x, y, 10, "white")
+
+let player;
 let powerUps = [];
 let projectiles = [];
 let enemies = [];
@@ -265,13 +264,15 @@ let particles = [];
 let backgroundParticle = [];
 
 function init() {
+    const x = canvas.width / 2;
+    const y = canvas.height / 2;
     player = new Player(x, y, 10, "white")
     projectiles = []
     enemies = []
     particles = []
-    score = 0
-    scoreEl.innerHTML = score
-    scoreResult.innerHTML = score
+    backgroundParticle = [];
+
+
 
     for (let x = 0; x < canvas.width; x += 30) {
         for (let y = 0; y < canvas.height; y += 30) {
@@ -576,6 +577,13 @@ addEventListener("keydown", ({ keyCode }) => {
     }
 })
 
+addEventListener("resize", () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    init()
+})
+
 startGameBtn.addEventListener("click", () => {
     init()
     animate()
@@ -585,5 +593,11 @@ startGameBtn.addEventListener("click", () => {
     startGameAudio.play()
     backgorundSoundAudio.currentTime = 125
     scene.active = true
+
+    score = 0
+    scoreEl.innerHTML = score
+    scoreResult.innerHTML = score
+
     backgorundSoundAudio.play()
+
 })
