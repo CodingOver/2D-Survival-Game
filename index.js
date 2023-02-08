@@ -1,4 +1,3 @@
-console.log(Howler)
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d")
 
@@ -9,6 +8,8 @@ const scoreEl = document.getElementById("scoreEl")
 const startGameBtn = document.getElementById("startGameBtn")
 const modalEl = document.getElementById("modalEl")
 const scoreResult = document.getElementById("scoreResult")
+const soundOffEl = document.getElementById("soundOff")
+const soundOnEl = document.getElementById("soundOn")
 
 const startGameAudio = new Howl({ src: ['./audio/startGame.mp3'] })
 const endGameAudio = new Howl({ src: ['./audio/endGame.mp3'] })
@@ -636,4 +637,15 @@ startGameBtn.addEventListener("click", () => {
             modalEl.style.display = 'none'
         }
     })
+})
+
+soundOffEl.addEventListener("click", (e) => {
+    backgorundSoundAudio.mute(true)
+    soundOnEl.style.display = 'block'
+    soundOffEl.style.display = 'none'
+})
+soundOnEl.addEventListener("click", (e) => {
+    backgorundSoundAudio.mute(false)
+    soundOnEl.style.display = 'none'
+    soundOffEl.style.display = 'block'
 })
