@@ -284,63 +284,57 @@ function init() {
 }
 
 function spawnEnemies() {
-    setInterval(() => {
-        const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+    const radius = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+
+    let x, y;
+    if (Math.random() < 0.5) {
+        x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
+        y = Math.random() * canvas.height;
+    } else {
+        x = Math.random() * canvas.width
+        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
+    }
+    // colorizing Game
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`
+    const angle = Math.atan2(
+        canvas.height / 2 - y, canvas.width / 2 - x)
+
+    const velocity = {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    }
 
 
-        let x, y;
-        if (Math.random() < 0.5) {
-            x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
-            y = Math.random() * canvas.height;
-        } else {
-            x = Math.random() * canvas.width
-            y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
-        }
-        // colorizing Game
-        const color = `hsl(${Math.random() * 360}, 50%, 50%)`
-        const angle = Math.atan2(
-            canvas.height / 2 - y, canvas.width / 2 - x)
+    enemies.push(new Enemy(x, y, radius, color, velocity))
 
-        const velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
-        }
-
-
-        enemies.push(new Enemy(x, y, radius, color, velocity))
-
-    }, 4000)
 }
 
 function spawnPowerUps() {
-    setInterval(() => {
-        let x, y;
+    let x, y;
 
-        if (Math.random() < 0.5) {
+    if (Math.random() < 0.5) {
 
-            x = Math.random() < 0.5 ? 0 - 7 : canvas.width + 7
-            y = Math.random() * canvas.height;
+        x = Math.random() < 0.5 ? 0 - 7 : canvas.width + 7
+        y = Math.random() * canvas.height;
 
-        } else {
-            7
-            x = Math.random() * canvas.width
-            y = Math.random() < 0.5 ? 0 - 9 : canvas.height + 9
+    } else {
+        7
+        x = Math.random() * canvas.width
+        y = Math.random() < 0.5 ? 0 - 9 : canvas.height + 9
 
-        }
+    }
 
-        // colorizing Game
-        const angle = Math.atan2(
-            canvas.height / 2 - y, canvas.width / 2 - x)
+    // colorizing Game
+    const angle = Math.atan2(
+        canvas.height / 2 - y, canvas.width / 2 - x)
 
-        const velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
-        }
+    const velocity = {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    }
 
 
-        powerUps.push(new PowerUp(x, y, velocity))
-
-    }, 4000)
+    powerUps.push(new PowerUp(x, y, velocity))
 }
 
 function createScoreLabel(projectile, score) {
@@ -374,6 +368,10 @@ function animate() {
     frame++;
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Starting Enemy 
+    if (frame % 100 === 0) spawnEnemies()
+    if (frame % 500 === 0) spawnPowerUps()
 
     backgroundParticle.forEach((backgroundParticle) => {
         const distance = Math.hypot(
@@ -473,6 +471,7 @@ function animate() {
         projectiles.forEach((projectile, projectileIndex) => {
             const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
 
+            // Hit Enemy
             // Projectiles Touch Enemy
             if (distance - enemy.radius - projectile.radius < 1) {
 
@@ -579,7 +578,7 @@ addEventListener("touchend", () => {
 })
 
 addEventListener("click", ({ clientX, clientY }) => {
-    if (scene.active) {
+    if (scene.active && player.powerUp !== "Automatic") {
         mouse.x = clientX
         mouse.y = clientY
         player.shoot(mouse)
@@ -610,8 +609,6 @@ addEventListener("resize", () => {
 startGameBtn.addEventListener("click", () => {
     init()
     animate()
-    spawnEnemies()
-    spawnPowerUps()
     startGameAudio.play()
     backgorundSoundAudio.currentTime = 125
     scene.active = true
@@ -620,7 +617,7 @@ startGameBtn.addEventListener("click", () => {
     score = 0
     scoreEl.innerHTML = score
     scoreResult.innerHTML = score
-    // backgorundSoundAudio.play()
+    backgorundSoundAudio.play()
 
 
     gsap.to('#whiteModalEl', {
