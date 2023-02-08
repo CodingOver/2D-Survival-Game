@@ -555,6 +555,22 @@ addEventListener("mouseup", () => {
 
 })
 
+addEventListener("touchstart", (event) => {
+    mouse.x = event.touches[0].clientX
+    mouse.y = event.touches[0].clientY
+
+    mouse.down = true
+})
+
+addEventListener("touchmove", (event) => {
+    mouse.x = event.touches[0].clientX
+    mouse.y = event.touches[0].clientY
+})
+
+addEventListener("touchend", () => {
+    mouse.down = false
+})
+
 addEventListener("click", ({ clientX, clientY }) => {
     if (scene.active) {
         mouse.x = clientX
@@ -593,7 +609,6 @@ startGameBtn.addEventListener("click", () => {
     startGameAudio.play()
     backgorundSoundAudio.currentTime = 125
     scene.active = true
-
     score = 0
     scoreEl.innerHTML = score
     scoreResult.innerHTML = score
