@@ -15,6 +15,12 @@ const shootAudio = new Audio('./audio/shoot.mp3')
 const enemyHitAudio = new Audio('./audio/enemyHit.mp3')
 const enemyEliminatedAudio = new Audio('./audio/enemyHit.mp3')
 const powerUpsAudio = new Audio('./audio/powerUp.mp3')
+const backgorundSoundAudio = new Audio('./audio/backgroundSound.mp3')
+
+backgorundSoundAudio.loop = true
+const scene = {
+    active: false
+}
 
 // Create a  Player
 class Player {
@@ -452,6 +458,7 @@ function animate() {
             modalEl.style.display = "flex"
             scoreResult.innerHTML = score;
             endGameAudio.play()
+            scene.active = false
         }
 
         // Detect collision on enemy & projectile hit
@@ -548,9 +555,12 @@ addEventListener("mouseup", () => {
 })
 
 addEventListener("click", ({ clientX, clientY }) => {
-    mouse.x = clientX
-    mouse.y = clientY
-    player.shoot(mouse)
+    if (scene.active) {
+        mouse.x = clientX
+        mouse.y = clientY
+        player.shoot(mouse)
+    }
+
 })
 
 
@@ -573,4 +583,7 @@ startGameBtn.addEventListener("click", () => {
     spawnPowerUps()
     modalEl.style.display = "none"
     startGameAudio.play()
+    backgorundSoundAudio.currentTime = 125
+    scene.active = true
+    backgorundSoundAudio.play()
 })
