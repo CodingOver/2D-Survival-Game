@@ -460,6 +460,13 @@ function animate() {
             scoreResult.innerHTML = score;
             endGameAudio.play()
             scene.active = false
+
+            gsap.to('#whiteModalEl', {
+                opacity: 1,
+                scale: 1,
+                duration: 0.45,
+                ease: 'expo',
+            })
         }
 
         // Detect collision on enemy & projectile hit
@@ -605,14 +612,24 @@ startGameBtn.addEventListener("click", () => {
     animate()
     spawnEnemies()
     spawnPowerUps()
-    modalEl.style.display = "none"
     startGameAudio.play()
     backgorundSoundAudio.currentTime = 125
     scene.active = true
+
+
     score = 0
     scoreEl.innerHTML = score
     scoreResult.innerHTML = score
+    // backgorundSoundAudio.play()
 
-    backgorundSoundAudio.play()
 
+    gsap.to('#whiteModalEl', {
+        opacity: 0,
+        scale: 0.75,
+        duration: 0.25,
+        ease: 'expo.in',
+        onComplete: () => {
+            modalEl.style.display = 'none'
+        }
+    })
 })
